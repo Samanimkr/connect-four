@@ -35,7 +35,8 @@ $BOXES.forEach(box => {
         const boxNum = this.id.substr(4);
         const column = boxNum % 7;
 
-        const current = POINTER_POSITIONS[POINTER_CURRENT_POSITION];
+        const leftPos = getComputedStyle($POINTER).left;
+        const current = parseInt(leftPos.substring(0, leftPos.length-2));
         const final = POINTER_POSITIONS[column];
         movePointer(current, final);
 
@@ -81,12 +82,12 @@ function insertChip(box) {
 }
 
 function movePointer(currentPos, finalPos) {
-    console.log('from: ', currentPos);
-    console.log('to: ', finalPos);
     var pos = currentPos;
     var id = setInterval(frame, 5);
+
     function frame() {
       if (pos == finalPos) {
+          animationInProgess = false;
         clearInterval(id);
       } else {
         pos = pos < finalPos? pos+5 : pos-5; 
