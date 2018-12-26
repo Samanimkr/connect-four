@@ -8,7 +8,8 @@ const $CONTAINER = document.querySelector(".container");
 const $BOXES_WRAPPER = document.querySelector(".boxes_wrapper");
 const $POINTER = document.querySelector(".pointer");
 
-const POINTER_POSITIONS = ['15px', '105px', '195px', '285px', '375px', '465px', '555px', '645px'];
+const POINTER_POSITIONS = [15, 105, 195, 285, 375, 465, 555, 645];
+var POINTER_CURRENT_POSITION = 0;
 var CURRENT_PLAYER = 1;
 
 // INITIALISING
@@ -33,7 +34,12 @@ $BOXES.forEach(box => {
     box.addEventListener("mouseover", function() {
         const boxNum = this.id.substr(4);
         const column = boxNum % 7;
-        $POINTER.style.left = POINTER_POSITIONS[column];
+
+        const current = POINTER_POSITIONS[POINTER_CURRENT_POSITION];
+        const final = POINTER_POSITIONS[column];
+        movePointer(current, final);
+
+        POINTER_CURRENT_POSITION = column;
     });
     box.addEventListener("click", function() {
         const boxNum = this.id.substr(4);
@@ -66,8 +72,25 @@ function insertChip(box) {
     if(CURRENT_PLAYER === 1) {
         box.classList.add('yellow');
         CURRENT_PLAYER = 2;
+        $POINTER.style.backgroundColor = "#d73c2c";
     } else {
         box.classList.add('red');
         CURRENT_PLAYER = 1;
+        $POINTER.style.backgroundColor = "#f1c40f";
     }
 }
+
+function movePointer(currentPos, finalPos) {
+    console.log('from: ', currentPos);
+    console.log('to: ', finalPos);
+    var pos = currentPos;
+    var id = setInterval(frame, 5);
+    function frame() {
+      if (pos == finalPos) {
+        clearInterval(id);
+      } else {
+        pos = pos < finalPos? pos+5 : pos-5; 
+        $POINTER.style.left = pos + 'px'; 
+      }
+    }
+  }
