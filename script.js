@@ -1,5 +1,4 @@
-import * as Directions from './checkDirections';
-
+// import { checkVertical } from './checkDirections';
 /*
  * CONFIG
  */
@@ -12,7 +11,6 @@ const GRID_DATA = []; // 0 = Empty, 1 = Player one, 2 = Player two
  * ELEMENTS SELECTORS
  */
 const $PLAYER_TURN = document.querySelector(".player_turn");
-const $CONTAINER = document.querySelector(".container");
 const $BOXES_WRAPPER = document.querySelector(".boxes_wrapper");
 const $POINTER = document.querySelector(".pointer");
 
@@ -76,10 +74,22 @@ $BOXES.forEach(box => {
     });
     box.addEventListener("click", function() {
         const boxNum = this.id.substr(4);
-        const currentColumn = boxNum % 7;
-        const response = insertChipProcedure(currentColumn);
-        if (response && response === -1) {
+        const column = boxNum % 7;
+        const nextFreeBox = getNextFreeBox(column);
+        const row = Math.floor(nextFreeBox/7);
+
+        if (nextFreeBox === -1) {
             console.log('Column is full!')
+        } else {
+            GRID_DATA[column][row] = CURRENT_PLAYER;
+
+            const box = document.getElementById(`box_${nextFreeBox}`);
+            if(CURRENT_PLAYER === 1) box.classList.add('yellow');
+            if(CURRENT_PLAYER === 2) box.classList.add('red');
+
+            const hasWon = checkForWinner(column, row);
+            if (hasWon) console.log(CURRENT_PLAYER + ' has WON!');
+            changeTurn();
         }
     });
 })
@@ -88,26 +98,17 @@ $BOXES.forEach(box => {
 /*
  * INSERTING CHIP PROCEDURE
  */
-function insertChipProcedure(column) {
-    const lastBoxInColumn = 5;
 
+function getNextFreeBox(column){
+    const lastBoxInColumn = 5;
     for (let row = lastBoxInColumn; row >= 0; row--) {
         const boxStatus = GRID_DATA[column][row];
         if (boxStatus === 0) {
-            GRID_DATA[column][row] = CURRENT_PLAYER;
-
-            const index = (row * 7) + column;
-            const box = document.getElementById(`box_${index}`);
-            if(CURRENT_PLAYER === 1) box.classList.add('yellow');
-            if(CURRENT_PLAYER === 2) box.classList.add('red');
-
-            checkForWinner(column, row);
-            changeTurn();
-            return;
+            return (row * 7) + column;;
         }
     }
     return -1;
-};
+}
 
 function changeTurn() {
     if(CURRENT_PLAYER === 1) {
@@ -127,10 +128,12 @@ function changeTurn() {
  * WINNING PROCEDURE
  */
 function checkForWinner(column, row) {
-    let playerHasWon = false;
-    if (!playerHasWon) playerHasWon = checkHorizontal(column, row);
-    if (!playerHasWon) playerHasWon = checkVertical(column, row);
-
+    let hasPlayerWon = false;
+    if (!hasPlayerWon) hasPlayerWon = checkVertical(column);
+    if (!hasPlayerWon) hasPlayerWon = checkHorizontal(row);
+    if (!hasPlayerWon) hasPlayerWon = checkDiagonalTLtoBR(column, row);
+    if (!hasPlayerWon) hasPlayerWon = checkDiagonalTRtoBL(column, row);
+    return hasPlayerWon;
     // Diagonals
     // if (row >= 2 && column >= 3 && !playerHasWon) { // Top Left
     //     playerHasWon = checkTopLeft(column, row);
@@ -144,25 +147,72 @@ function checkForWinner(column, row) {
     // if (row <= 2 && column <= 3 && !playerHasWon) { // Bottom Right
     //     playerHasWon = checkBottomRight(column, row);
     // }
-    if (playerHasWon) console.log(CURRENT_PLAYER + ' is the WINNER');
 }
 
+
 // GROUP DIRECTIONS
-function checkVertical(column, row) {
-    let counter = 1;
-    if (row <= 2) { // Bottom
-        counter += Directions.checkBottom(column, row);
+function checkVertical(column) {
+    let counter = 0, currentRow = 0;
+
+    while (counter < 4 && currentRow < GRID_ROWS) {
+        if (GRID_DATA[column][currentRow] === CURRENT_PLAYER) {
+            counter++;
+        } else {
+            counter = 0;
+        }
+        currentRow++;
     }
+
     return (counter >= 4);
 };
 
-function checkHorizontal(column, row) {
-    let counter = 1;
-    if (column >= 3) { // Left
-        counter += Directions.checkLeft(column, row);
+function checkHorizontal(row) {
+    let counter = 0, currentColumn = 0;
+
+    while (counter < 4 && currentColumn < GRID_COLUMNS) {
+        if (GRID_DATA[currentColumn][row] === CURRENT_PLAYER) {
+            counter++;
+        } else {
+            counter = 0;
+        }
+        currentColumn++;
     }
-    if (column <= 3 && counter < 4) { // Right
-        counter += Directions.checkRight(column, row);
-    }
+
     return (counter >= 4);
 };
+
+function checkDiagonalTLtoBR(column, row) {
+    let counter = 0;
+    let currentColumn = column > row ? column - row : 0;
+    let currentRow = row > column ? row - column : 0;
+
+    while (counter < 4 && currentColumn < GRID_COLUMNS && currentRow < GRID_ROWS) {
+        if (GRID_DATA[currentColumn][currentRow] === CURRENT_PLAYER) {
+            counter++;
+        } else {
+            counter = 0;
+        }
+        currentColumn++;
+        currentRow++;
+    }
+    
+    return (counter >= 4);
+};
+
+// function checkDiagonalTRtoBL(column, row) {
+//     let counter = 0;
+//     let currentColumn = column > row ? column - row : 0;
+//     let currentRow = row > column ? row - column : 0;
+
+//     while (counter < 4 && currentColumn < GRID_COLUMNS && currentRow < GRID_ROWS) {
+//         if (GRID_DATA[currentColumn][currentRow] === CURRENT_PLAYER) {
+//             counter++;
+//         } else {
+//             counter = 0;
+//         }
+//         currentColumn++;
+//         currentRow++;
+//     }
+    
+//     return (counter >= 4);
+// };
