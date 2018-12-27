@@ -1,3 +1,5 @@
+import * as Directions from './checkDirections';
+
 /*
  * CONFIG
  */
@@ -149,7 +151,7 @@ function checkForWinner(column, row) {
 function checkVertical(column, row) {
     let counter = 1;
     if (row <= 2) { // Bottom
-        counter += checkBottom(column, row);
+        counter += Directions.checkBottom(column, row);
     }
     return (counter >= 4);
 };
@@ -157,47 +159,10 @@ function checkVertical(column, row) {
 function checkHorizontal(column, row) {
     let counter = 1;
     if (column >= 3) { // Left
-        counter += checkLeft(column, row);
+        counter += Directions.checkLeft(column, row);
     }
     if (column <= 3 && counter < 4) { // Right
-        counter += checkRight(column, row);
+        counter += Directions.checkRight(column, row);
     }
     return (counter >= 4);
 };
-
-// INDIVIDUAL DIRECTIONS - MOVE TO A NEW FILE!!!
-function checkBottom(column, row){
-    let counter = 1, flag = true;
-    while (counter < 4 && flag) {
-        if (GRID_DATA[column][row+counter] === CURRENT_PLAYER) {
-            counter++;
-        } else {
-            flag = false;
-        }
-    }
-    return counter-1;
-}
-
-function checkLeft(column, row){
-    let counter = 1, flag = true;
-    while (counter < 4 && flag) {
-        if (GRID_DATA[column-counter][row] === CURRENT_PLAYER) {
-            counter++;
-        } else {
-            flag = false;
-        }
-    }
-    return counter-1;
-}
-
-function checkRight(column, row){
-    let counter = 1, flag = true;
-    while (counter < 4 && flag) {
-        if (GRID_DATA[column+counter][row] === CURRENT_PLAYER) {
-            counter++;
-        } else {
-            flag = false;
-        }
-    }
-    return counter-1;
-}
