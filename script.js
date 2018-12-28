@@ -124,6 +124,7 @@ function changeTurn() {
     }
 }
 
+
 /*
  * WINNING PROCEDURE
  */
@@ -134,23 +135,8 @@ function checkForWinner(column, row) {
     if (!hasPlayerWon) hasPlayerWon = checkDiagonalTLtoBR(column, row);
     if (!hasPlayerWon) hasPlayerWon = checkDiagonalTRtoBL(column, row);
     return hasPlayerWon;
-    // Diagonals
-    // if (row >= 2 && column >= 3 && !playerHasWon) { // Top Left
-    //     playerHasWon = checkTopLeft(column, row);
-    // }
-    // if (row <= 2 && column >= 3 && !playerHasWon) { // Bottom Left
-    //     playerHasWon = checkBottomLeft(column, row);
-    // }
-    // if (row >= 2 && column <= 3 && !playerHasWon) { // Top Right
-    //     playerHasWon = checkTopRight(column, row);
-    // }
-    // if (row <= 2 && column <= 3 && !playerHasWon) { // Bottom Right
-    //     playerHasWon = checkBottomRight(column, row);
-    // }
 }
 
-
-// GROUP DIRECTIONS
 function checkVertical(column) {
     let counter = 0, currentRow = 0;
 
@@ -200,11 +186,11 @@ function checkDiagonalTLtoBR(column, row) {
 };
 
 function checkDiagonalTRtoBL(column, row) {
-    let counter = 0, flippedColumn = GRID_COLUMNS - column - 2;
-    let currentColumn = row > flippedColumn ? row - flippedColumn : 0;
-    let currentRow = flippedColumn > row ? flippedColumn - row : 0;
-    console.log(currentColumn);
-    console.log(currentRow);
+    let counter = 0;
+    let flippedColumn = (GRID_COLUMNS - 1) - column;
+    let currentColumn = flippedColumn > row ? row + column : 6;
+    let currentRow = row > flippedColumn ? row - flippedColumn: 0;
+
     while (counter < 4 && currentColumn > 0 && currentRow < GRID_ROWS) {
         if (GRID_DATA[currentColumn][currentRow] === CURRENT_PLAYER) {
             counter++;
