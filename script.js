@@ -199,20 +199,21 @@ function checkDiagonalTLtoBR(column, row) {
     return (counter >= 4);
 };
 
-// function checkDiagonalTRtoBL(column, row) {
-//     let counter = 0;
-//     let currentColumn = column > row ? column - row : 0;
-//     let currentRow = row > column ? row - column : 0;
-
-//     while (counter < 4 && currentColumn < GRID_COLUMNS && currentRow < GRID_ROWS) {
-//         if (GRID_DATA[currentColumn][currentRow] === CURRENT_PLAYER) {
-//             counter++;
-//         } else {
-//             counter = 0;
-//         }
-//         currentColumn++;
-//         currentRow++;
-//     }
+function checkDiagonalTRtoBL(column, row) {
+    let counter = 0, flippedColumn = GRID_COLUMNS - column - 2;
+    let currentColumn = row > flippedColumn ? row - flippedColumn : 0;
+    let currentRow = flippedColumn > row ? flippedColumn - row : 0;
+    console.log(currentColumn);
+    console.log(currentRow);
+    while (counter < 4 && currentColumn > 0 && currentRow < GRID_ROWS) {
+        if (GRID_DATA[currentColumn][currentRow] === CURRENT_PLAYER) {
+            counter++;
+        } else {
+            counter = 0;
+        }
+        currentColumn--;
+        currentRow++;
+    }
     
-//     return (counter >= 4);
-// };
+    return (counter >= 4);
+};
