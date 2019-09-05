@@ -85,3 +85,13 @@ button:focus {
     background-color: #e74c3c;
     box-shadow: inset 0px 0px 0px 7px #d73c2c;
 }
+
+.yellow_indicator {
+    background-color: #f1d8b1;
+    box-shadow: inset 0px 0px 0px 7px #e3b37e;
+}
+
+.red_indicator {
+    background-color: #e7b3a4;
+    box-shadow: inset 0px 0px 0px 7px #d87167;
+}

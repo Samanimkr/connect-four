@@ -69,23 +69,43 @@ $BOXES.forEach(box => {
         const current = parseInt(leftPos.substring(0, leftPos.length-2));
         const final = POINTER_POSITIONS[column];
         movePointer(current, final);
-
         POINTER_CURRENT_POSITION = column;
+
+        const nextFreeBox = getNextFreeBox(column);
+        if (nextFreeBox !== -1) {
+            const box = document.getElementById(`box_${nextFreeBox}`);
+            if (CURRENT_PLAYER === 1) box.classList.add('yellow_indicator');
+            if (CURRENT_PLAYER === 2) box.classList.add('red_indicator');
+        }
+    });
+    box.addEventListener("mouseleave", function() {
+        if (CURRENT_PLAYER === 1) {
+            const box = document.querySelector('.yellow_indicator');
+            if (box) box.classList.remove('yellow_indicator');
+        } else {
+            const box = document.querySelector('.red_indicator');
+            if (box) box.classList.remove('red_indicator');
+        }
     });
     box.addEventListener("click", function() {
         const boxNum = this.id.substr(4);
         const column = boxNum % 7;
         const nextFreeBox = getNextFreeBox(column);
-        const row = Math.floor(nextFreeBox/7);
-
+        
         if (nextFreeBox === -1) {
             console.log('Column is full!')
         } else {
+            const row = Math.floor(nextFreeBox/7);
             GRID_DATA[column][row] = CURRENT_PLAYER;
 
             const box = document.getElementById(`box_${nextFreeBox}`);
-            if(CURRENT_PLAYER === 1) box.classList.add('yellow');
-            if(CURRENT_PLAYER === 2) box.classList.add('red');
+            if(CURRENT_PLAYER === 1){
+                box.classList.remove('yellow_indicator');
+                box.classList.add('yellow');
+            } else {
+                box.classList.remove('red_indicator');
+                box.classList.add('red');
+            }
 
             const hasWon = checkForWinner(column, row);
             if (hasWon) console.log(CURRENT_PLAYER + ' has WON!');
@@ -104,7 +124,7 @@ function getNextFreeBox(column){
     for (let row = lastBoxInColumn; row >= 0; row--) {
         const boxStatus = GRID_DATA[column][row];
         if (boxStatus === 0) {
-            return (row * 7) + column;;
+            return (row * 7) + column;
         }
     }
     return -1;
